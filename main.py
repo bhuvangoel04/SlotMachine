@@ -1,4 +1,6 @@
 import random
+import time
+import sys
 
 MAX_LINES = 3
 MAX_BET = 10000
@@ -19,7 +21,8 @@ symbols_values = {
     "B": 4,
     "C": 3,
     "D": 2
-}
+} # multiplier for each symbol
+
 def check_winnings(columns, lines, bet, values):
     winnings = 0
     winning_lines = []
@@ -29,7 +32,7 @@ def check_winnings(columns, lines, bet, values):
             if symbol != column[line]: # mismatch
                 break
         else:
-            winnings += values[symbol] * bet
+            winnings += values[symbol] * bet 
             winning_lines.append(line + 1)
 
     return winnings, winning_lines
@@ -97,8 +100,7 @@ def get_bet():
             print("Please enter a valid number.")
     return bet
 
-def main():
-    balance = deposit()
+def spin(balance):
     lines = get_number_of_lines()
     while True:
         bet = get_bet()
@@ -110,6 +112,44 @@ def main():
     print(f"You are betting {bet} INR on {lines} lines. Total bet is {totalBet} INR.")
     slots = get_slot_machine_spin(ROWS, COLS, symbols_count)
     print_slot_machine(slots)
+    winnings, winning_lines = check_winnings(slots, lines, bet, symbols_values)
+    balance += winnings - totalBet
+    if(winnings > 0):
+        print(f"You won {winnings} INR. Updated Balance is {balance} INR. You got some luck this time, Wanna try again?")
+    else:
+        print(f"You lost. Updated Balance is {balance} INR. No worries , try again!")
+    return balance
 
+def main():
+    print("Welcome to the Slot Machine!", end="", flush=True)
+    for _ in range(5):
+        time.sleep(0.4)
+        print(".", end="", flush=True)
+    print()
+    bar = ["▖", "▘", "▝", "▗"]
+    print("Initializing ", end="", flush=True)
+    for i in range(10):
+        sys.stdout.write(bar[i % len(bar)])
+        sys.stdout.flush()
+        time.sleep(0.2)
+        sys.stdout.write("\b")
+        
+    print()
+    balance = deposit()
+    while True:
+        print(f"Your current balance is {balance} INR.")
+        balance = spin(balance)
+        if balance <= 0:
+            print("You have run out of balance! Game over.")
+            break
+        answer = input("Do you want to play again? (y/n): ")
+        if answer.lower() != 'y':
+            break
+        else:
+            print("You got this! Let's go again!")
+            print("Need to add more money to your balance first.")
+            balance = deposit()
+        
+    
 
 main()
