@@ -14,6 +14,26 @@ symbols_count = {
     "D": 8
 }
 
+symbols_values = {
+    "A": 5,
+    "B": 4,
+    "C": 3,
+    "D": 2
+}
+def check_winnings(columns, lines, bet, values):
+    winnings = 0
+    winning_lines = []
+    for line in range(lines):
+        symbol = columns[0][line]
+        for column in columns:
+            if symbol != column[line]: # mismatch
+                break
+        else:
+            winnings += values[symbol] * bet
+            winning_lines.append(line + 1)
+
+    return winnings, winning_lines
+   
 def get_slot_machine_spin(rows, cols, symbols):
     all_symbols = []
     for symbol, symbol_count in symbols.items():
@@ -32,6 +52,12 @@ def get_slot_machine_spin(rows, cols, symbols):
 
     return columns
 
+def print_slot_machine(columns):
+    for row in range(len(columns[0])):
+        for i,column in enumerate(columns):
+            print(column[row], end=" | " if i < len(columns) - 1 else "")
+        print() 
+        
 def deposit():
     while True:
         amount  = input("Enter deposit amount:")
@@ -82,6 +108,8 @@ def main():
         else:            
             break 
     print(f"You are betting {bet} INR on {lines} lines. Total bet is {totalBet} INR.")
+    slots = get_slot_machine_spin(ROWS, COLS, symbols_count)
+    print_slot_machine(slots)
 
 
 main()
